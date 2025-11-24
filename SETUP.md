@@ -22,10 +22,22 @@ PRISMA_ENGINES_CHECKSUM_IGNORE_MISSING=1 npm run db:generate
 npm run db:push
 ```
 
-4. **Configure Environment Variables**
-Edit `.env` file with your email settings:
+4. **Seed the Database (Optional but Recommended)**
+```bash
+npm run db:seed
+```
+
+This will create:
+- Sample categories (Technology, Lifestyle, Business)
+- 3 sample blog posts
+- 2 sample subscribers
+- 1 sample newsletter
+
+5. **Configure Environment Variables**
+
+The `.env` file is already configured with defaults. Update it with your email settings:
 ```env
-DATABASE_URL="file:./dev.db"
+DATABASE_URL="file:./prisma/dev.db"
 EMAIL_HOST="smtp.gmail.com"
 EMAIL_PORT="587"
 EMAIL_USER="your-email@gmail.com"
@@ -34,7 +46,9 @@ EMAIL_FROM="your-email@gmail.com"
 NEXT_PUBLIC_APP_URL="http://localhost:3000"
 ```
 
-5. **Start the Development Server**
+**Note**: Email configuration is only needed if you want to send newsletters. You can use the app without email configured.
+
+6. **Start the Development Server**
 ```bash
 npm run dev
 ```

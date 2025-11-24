@@ -41,36 +41,35 @@ cd MyPersonalNewsLetter
 npm install
 ```
 
-3. Set up environment variables:
-```bash
-cp .env.example .env
+3. The `.env` file is already configured with sensible defaults. You only need to update email settings if you want to send newsletters:
+
+```env
+DATABASE_URL="file:./prisma/dev.db"
+EMAIL_HOST="smtp.gmail.com"
+EMAIL_USER="your-email@gmail.com"
+EMAIL_PASSWORD="your-app-password"
 ```
 
-Edit `.env` and configure your settings:
-- `DATABASE_URL`: Database connection string (default: SQLite)
-- `EMAIL_HOST`: SMTP server host (e.g., smtp.gmail.com)
-- `EMAIL_PORT`: SMTP port (default: 587)
-- `EMAIL_USER`: Your email address
-- `EMAIL_PASSWORD`: Your email password or app-specific password
-- `EMAIL_FROM`: Sender email address
-- `NEXT_PUBLIC_APP_URL`: Your app URL (default: http://localhost:3000)
+**Note**: Email configuration is optional. The app works without it.
 
 ### Database Setup
 
 1. Generate Prisma client:
 ```bash
-npx prisma generate
+npm run db:generate
 ```
 
-2. Run database migrations:
+2. Initialize the database:
 ```bash
-npx prisma db push
+npm run db:push
 ```
 
-3. (Optional) Seed the database with sample data:
+3. (Recommended) Seed with sample data:
 ```bash
-npx prisma studio
+npm run db:seed
 ```
+
+This creates sample categories, blog posts, subscribers, and a newsletter to help you get started.
 
 ### Running the Application
 
