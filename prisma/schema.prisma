@@ -1,0 +1,69 @@
+// This is your Prisma schema file
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Category {
+  id        String   @id @default(uuid())
+  name      String   @unique
+  slug      String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  blogs     Blog[]
+}
+
+model Blog {
+  id          String              @id @default(uuid())
+  title       String
+  slug        String              @unique
+  content     String
+  excerpt     String?
+  published   Boolean             @default(false)
+  publishedAt DateTime?
+  createdAt   DateTime            @default(now())
+  updatedAt   DateTime            @updatedAt
+  categoryId  String
+  category    Category            @relation(fields: [categoryId], references: [id])
+  newsletters NewsletterBlog[]
+}
+
+model Newsletter {
+  id          String           @id @default(uuid())
+  title       String
+  slug        String           @unique
+  description String?
+  sent        Boolean          @default(false)
+  sentAt      DateTime?
+  scheduledAt DateTime?
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+  blogs       NewsletterBlog[]
+}
+
+model NewsletterBlog {
+  id           String     @id @default(uuid())
+  newsletterId String
+  blogId       String
+  order        Int        @default(0)
+  newsletter   Newsletter @relation(fields: [newsletterId], references: [id], onDelete: Cascade)
+  blog         Blog       @relation(fields: [blogId], references: [id], onDelete: Cascade)
+  createdAt    DateTime   @default(now())
+
+  @@unique([newsletterId, blogId])
+}
+
+model Subscriber {
+  id          String    @id @default(uuid())
+  email       String    @unique
+  name        String?
+  active      Boolean   @default(true)
+  confirmedAt DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
