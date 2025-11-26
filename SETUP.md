@@ -35,9 +35,11 @@ This will create:
 
 5. **Configure Environment Variables**
 
-The `.env` file is already configured with defaults. Update it with your email settings:
+The `.env` file is already configured with defaults. Update it with your settings:
 ```env
 DATABASE_URL="file:./prisma/dev.db"
+NEXTAUTH_SECRET="your-secret-key-here"
+NEXTAUTH_URL="http://localhost:3000"
 EMAIL_HOST="smtp.gmail.com"
 EMAIL_PORT="587"
 EMAIL_USER="your-email@gmail.com"
@@ -46,7 +48,10 @@ EMAIL_FROM="your-email@gmail.com"
 NEXT_PUBLIC_APP_URL="http://localhost:3000"
 ```
 
-**Note**: Email configuration is only needed if you want to send newsletters. You can use the app without email configured.
+**Important**: 
+- `NEXTAUTH_SECRET`: Generate a secure random string for JWT encryption. You can use: `openssl rand -base64 32`
+- `NEXTAUTH_URL`: The base URL of your application (use `http://localhost:3000` for development)
+- Email configuration is only needed if you want to send newsletters. You can use the app without email configured.
 
 6. **Start the Development Server**
 ```bash

@@ -8,10 +8,11 @@ export const dynamic = 'force-dynamic';
 export default async function BlogPost({
   params,
 }: {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 }) {
+  const { slug } = await params;
   const blog = await prisma.blog.findUnique({
-    where: { slug: params.slug, published: true },
+    where: { slug, published: true },
     include: { category: true },
   });
 
@@ -43,10 +44,10 @@ export default async function BlogPost({
         <div className="text-gray-600 mb-8">
           {blog.publishedAt
             ? new Date(blog.publishedAt).toLocaleDateString("en-US", {
-                year: "numeric",
-                month: "long",
-                day: "numeric",
-              })
+              year: "numeric",
+              month: "long",
+              day: "numeric",
+            })
             : ""}
         </div>
 

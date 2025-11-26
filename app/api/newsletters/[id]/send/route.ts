@@ -4,11 +4,12 @@ import { sendEmail, generateNewsletterEmailHTML } from "@/lib/email";
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
   try {
     const newsletter = await prisma.newsletter.findUnique({
-      where: { id: params.id },
+      where: { id },
       include: {
         blogs: {
           include: {
@@ -65,7 +66,7 @@ export async function POST(
     ).length;
 
     await prisma.newsletter.update({
-      where: { id: params.id },
+      where: { id },
       data: {
         sent: true,
         sentAt: new Date(),
