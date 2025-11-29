@@ -2,7 +2,7 @@ import PrintButton from "@/components/PrintButton";
 
 export default function ResumePage() {
     return (
-        <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-purple-50 dark:from-gray-950 dark:via-blue-950 dark:to-purple-950">
+        <div id="resume-content" className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-purple-50 dark:from-gray-950 dark:via-blue-950 dark:to-purple-950">
             {/* Hero Section */}
             <div className="relative overflow-hidden bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 dark:from-blue-800 dark:via-purple-800 dark:to-pink-800">
                 <div className="absolute inset-0 bg-grid-white/10"></div>
