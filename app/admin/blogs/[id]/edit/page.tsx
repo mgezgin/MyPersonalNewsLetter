@@ -26,41 +26,47 @@ export default function EditBlogPage() {
     const [saving, setSaving] = useState(false);
     const [error, setError] = useState("");
 
+
+
+
+
+
+
     useEffect(() => {
+        const fetchCategories = async () => {
+            try {
+                const response = await fetch("/api/categories");
+                const data = await response.json();
+                setCategories(data);
+            } catch (error) {
+                console.error("Failed to fetch categories:", error);
+            }
+        };
+
+        const fetchBlog = async () => {
+            try {
+                const response = await fetch(`/api/blogs/${id}`);
+                if (!response.ok) throw new Error("Failed to fetch blog");
+                const data = await response.json();
+                setFormData({
+                    title: data.title,
+                    content: data.content,
+                    excerpt: data.excerpt || "",
+                    categoryId: data.categoryId,
+                    published: data.published,
+                });
+            } catch (error) {
+                setError("Failed to load blog post");
+                console.error(error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
         if (id) {
             Promise.all([fetchCategories(), fetchBlog()]);
         }
     }, [id]);
-
-    const fetchCategories = async () => {
-        try {
-            const response = await fetch("/api/categories");
-            const data = await response.json();
-            setCategories(data);
-        } catch (error) {
-            console.error("Failed to fetch categories:", error);
-        }
-    };
-
-    const fetchBlog = async () => {
-        try {
-            const response = await fetch(`/api/blogs/${id}`);
-            if (!response.ok) throw new Error("Failed to fetch blog");
-            const data = await response.json();
-            setFormData({
-                title: data.title,
-                content: data.content,
-                excerpt: data.excerpt || "",
-                categoryId: data.categoryId,
-                published: data.published,
-            });
-        } catch (error) {
-            setError("Failed to load blog post");
-            console.error(error);
-        } finally {
-            setLoading(false);
-        }
-    };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();

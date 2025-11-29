@@ -261,7 +261,7 @@ export default function ResumePage() {
                             <div className="absolute inset-0 bg-gradient-to-br from-green-500 to-emerald-500 rounded-2xl blur-xl opacity-50 group-hover:opacity-75 transition-opacity"></div>
                             <div className="relative bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm rounded-2xl p-6 border border-gray-200/50 dark:border-gray-700/50 shadow-xl">
                                 <div className="text-4xl mb-4">🎯</div>
-                                <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-2">Bachelor's Degree</h3>
+                                <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-2">Bachelor&apos;s Degree</h3>
                                 <p className="text-green-600 dark:text-green-400 font-semibold mb-2">Sulayman Demirel University</p>
                                 <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">September 2009 - June 2014 • Isparta, Turkey</p>
                                 <p className="text-gray-700 dark:text-gray-300">
