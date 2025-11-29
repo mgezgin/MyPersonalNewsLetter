@@ -27,33 +27,59 @@ npm run db:push
 npm run db:seed
 ```
 
-This will create:
-- Sample categories (Technology, Lifestyle, Business)
-- 3 sample blog posts
-- 2 sample subscribers
-- 1 sample newsletter
+## Environment Variables
 
-5. **Configure Environment Variables**
+Create a `.env` file in the root directory with the following variables:
 
-The `.env` file is already configured with defaults. Update it with your settings:
 ```env
-DATABASE_URL="file:./prisma/dev.db"
+# Database (PostgreSQL)
+DATABASE_URL="postgresql://user:password@host:port/database?schema=public"
+
+# NextAuth
 NEXTAUTH_SECRET="your-secret-key-here"
 NEXTAUTH_URL="http://localhost:3000"
+
+# Email Configuration
 EMAIL_HOST="smtp.gmail.com"
 EMAIL_PORT="587"
 EMAIL_USER="your-email@gmail.com"
 EMAIL_PASSWORD="your-app-password"
 EMAIL_FROM="your-email@gmail.com"
+
+# App URL
 NEXT_PUBLIC_APP_URL="http://localhost:3000"
+
+# Vercel Blob Storage (for image uploads)
+BLOB_READ_WRITE_TOKEN="your-vercel-blob-token"
 ```
 
-**Important**: 
-- `NEXTAUTH_SECRET`: Generate a secure random string for JWT encryption. You can use: `openssl rand -base64 32`
-- `NEXTAUTH_URL`: The base URL of your application (use `http://localhost:3000` for development)
-- Email configuration is only needed if you want to send newsletters. You can use the app without email configured.
+### Database Setup
 
-6. **Start the Development Server**
+You have several options for PostgreSQL:
+
+1. **Vercel Postgres** (Recommended for production):
+   - Go to your Vercel project → Storage → Create Database → Postgres
+   - Copy the `DATABASE_URL` connection string
+   
+2. **Local PostgreSQL**:
+   ```
+   DATABASE_URL="postgresql://postgres:password@localhost:5432/newsletter"
+   ```
+
+3. **Managed Services** (Neon, Supabase, Railway):
+   - Create a PostgreSQL database
+   - Copy the connection string
+
+### Vercel Blob Storage Setup
+
+1. Create a Vercel account at https://vercel.com
+2. Go to Storage → Create Blob Store
+3. Copy your `BLOB_READ_WRITE_TOKEN`
+4. Add it to your `.env` file
+
+**Note**: For local development, you can skip Vercel Blob setup initially. The app will show errors when uploading images, but other features will work.
+
+5. **Start the Development Server**
 ```bash
 npm run dev
 ```
