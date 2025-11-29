@@ -3,6 +3,7 @@ import { Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import Navigation from "@/components/Navigation";
+import AuthProvider from "@/components/AuthProvider";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -29,15 +30,17 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${inter.variable} ${jetbrainsMono.variable}`} suppressHydrationWarning>
       <body suppressHydrationWarning>
-        <ThemeProvider>
-          <Navigation />
-          <main className="min-h-screen bg-white dark:bg-gray-950 text-gray-900 dark:text-gray-100 transition-colors">{children}</main>
-          <footer className="bg-gray-900 dark:bg-gray-900 text-gray-300 dark:text-gray-400 py-8 mt-12 border-t border-gray-800 dark:border-gray-800">
-            <div className="container mx-auto px-4 text-center">
-              <p>&copy; 2024 Personal Newsletter. All rights reserved.</p>
-            </div>
-          </footer>
-        </ThemeProvider>
+        <AuthProvider>
+          <ThemeProvider>
+            <Navigation />
+            <main className="min-h-screen bg-white dark:bg-gray-950 text-gray-900 dark:text-gray-100 transition-colors">{children}</main>
+            <footer className="bg-gray-900 dark:bg-gray-900 text-gray-300 dark:text-gray-400 py-8 mt-12 border-t border-gray-800 dark:border-gray-800">
+              <div className="container mx-auto px-4 text-center">
+                <p>&copy; 2024 Personal Newsletter. All rights reserved.</p>
+              </div>
+            </footer>
+          </ThemeProvider>
+        </AuthProvider>
       </body>
     </html>
   );

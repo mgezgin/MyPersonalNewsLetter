@@ -2,10 +2,12 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useSession } from "next-auth/react";
 import ThemeToggle from "./ThemeToggle";
 
 export default function Navigation() {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const { data: session } = useSession();
 
     return (
         <nav className="bg-blue-600 dark:bg-gray-900 text-white shadow-lg transition-colors">
@@ -29,9 +31,11 @@ export default function Navigation() {
                         <Link href="/resume" className="hover:text-blue-200 dark:hover:text-blue-300 transition-colors">
                             Resume
                         </Link>
-                        <Link href="/admin" className="hover:text-blue-200 dark:hover:text-blue-300 transition-colors">
-                            Admin
-                        </Link>
+                        {session && (
+                            <Link href="/admin" className="hover:text-blue-200 dark:hover:text-blue-300 transition-colors">
+                                Admin
+                            </Link>
+                        )}
                         <ThemeToggle />
                     </div>
 
@@ -101,13 +105,15 @@ export default function Navigation() {
                         >
                             Resume
                         </Link>
-                        <Link
-                            href="/admin"
-                            className="block py-2 px-4 hover:bg-blue-700 dark:hover:bg-gray-800 rounded transition-colors"
-                            onClick={() => setIsMenuOpen(false)}
-                        >
-                            Admin
-                        </Link>
+                        {session && (
+                            <Link
+                                href="/admin"
+                                className="block py-2 px-4 hover:bg-blue-700 dark:hover:bg-gray-800 rounded transition-colors"
+                                onClick={() => setIsMenuOpen(false)}
+                            >
+                                Admin
+                            </Link>
+                        )}
                     </div>
                 )}
             </div>
