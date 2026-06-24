@@ -9,10 +9,7 @@ export async function GET(
 ) {
     const { id } = await params;
     try {
-        const blog = await prisma.blog.findUnique({
-            where: { id },
-            include: { category: true },
-        });
+        const blog = await prisma.blog.findUnique({ where: { id } });
 
         if (!blog) {
             return NextResponse.json({ error: "Blog not found" }, { status: 404 });
@@ -39,11 +36,11 @@ export async function PUT(
         }
 
         const body = await request.json();
-        const { title, content, excerpt, categoryId, published } = body;
+        const { title, content, excerpt, tags, published } = body;
 
-        if (!title || !content || !categoryId) {
+        if (!title || !content) {
             return NextResponse.json(
-                { error: "Title, content, and category are required" },
+                { error: "Title and content are required" },
                 { status: 400 }
             );
         }
@@ -60,7 +57,7 @@ export async function PUT(
                 slug,
                 content,
                 excerpt: excerpt || content.substring(0, 150) + "...",
-                categoryId,
+                tags: tags || [],
                 published,
                 publishedAt: published ? new Date() : null,
             },
@@ -86,9 +83,7 @@ export async function DELETE(
             return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
         }
 
-        await prisma.blog.delete({
-            where: { id },
-        });
+        await prisma.blog.delete({ where: { id } });
 
         return NextResponse.json({ message: "Blog deleted" });
     } catch (error) {

@@ -4,45 +4,34 @@ import { useState, useEffect } from "react";
 import { useRouter, useParams } from "next/navigation";
 import MarkdownEditor from "@/components/MarkdownEditor";
 
-interface Category {
-    id: string;
-    name: string;
-}
+const TAGS = ["ai", "cloud", "advance", "programming"] as const;
 
 export default function EditBlogPage() {
     const router = useRouter();
     const params = useParams();
     const id = params.id as string;
 
-    const [categories, setCategories] = useState<Category[]>([]);
     const [formData, setFormData] = useState({
         title: "",
         content: "",
         excerpt: "",
-        categoryId: "",
+        tags: [] as string[],
         published: false,
     });
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
     const [error, setError] = useState("");
 
-
-
-
-
-
+    const toggleTag = (tag: string) => {
+        setFormData((prev) => ({
+            ...prev,
+            tags: prev.tags.includes(tag)
+                ? prev.tags.filter((t) => t !== tag)
+                : [...prev.tags, tag],
+        }));
+    };
 
     useEffect(() => {
-        const fetchCategories = async () => {
-            try {
-                const response = await fetch("/api/categories");
-                const data = await response.json();
-                setCategories(data);
-            } catch (error) {
-                console.error("Failed to fetch categories:", error);
-            }
-        };
-
         const fetchBlog = async () => {
             try {
                 const response = await fetch(`/api/blogs/${id}`);
@@ -52,20 +41,17 @@ export default function EditBlogPage() {
                     title: data.title,
                     content: data.content,
                     excerpt: data.excerpt || "",
-                    categoryId: data.categoryId,
+                    tags: data.tags || [],
                     published: data.published,
                 });
-            } catch (error) {
+            } catch {
                 setError("Failed to load blog post");
-                console.error(error);
             } finally {
                 setLoading(false);
             }
         };
 
-        if (id) {
-            Promise.all([fetchCategories(), fetchBlog()]);
-        }
+        if (id) fetchBlog();
     }, [id]);
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -88,91 +74,84 @@ export default function EditBlogPage() {
             } else {
                 setError(data.error || "Failed to update blog");
             }
-        } catch (error) {
+        } catch {
             setError("An error occurred. Please try again.");
         } finally {
             setSaving(false);
         }
     };
 
-    if (loading) return <div className="p-8">Loading...</div>;
+    if (loading) return <div className="p-8 text-gray-900 dark:text-gray-100">Loading...</div>;
     if (error && !formData.title) return <div className="p-8 text-red-600">{error}</div>;
 
     return (
         <div className="container mx-auto px-4 py-8 max-w-5xl">
-            <h1 className="text-3xl font-bold mb-8">Edit Blog Post</h1>
+            <h1 className="text-3xl font-bold mb-8 text-gray-900 dark:text-gray-100">Edit Blog Post</h1>
 
             <form onSubmit={handleSubmit} className="space-y-6">
                 {error && (
-                    <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+                    <div className="bg-red-100 dark:bg-red-900/30 border border-red-400 dark:border-red-700 text-red-700 dark:text-red-300 px-4 py-3 rounded">
                         {error}
                     </div>
                 )}
 
-                <div className="bg-white p-6 rounded-lg shadow space-y-6">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">
-                                Title
-                            </label>
-                            <input
-                                type="text"
-                                required
-                                value={formData.title}
-                                onChange={(e) =>
-                                    setFormData({ ...formData, title: e.target.value })
-                                }
-                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                placeholder="Enter blog title"
-                            />
-                        </div>
+                <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow space-y-6">
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            Title
+                        </label>
+                        <input
+                            type="text"
+                            required
+                            value={formData.title}
+                            onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                            className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                            placeholder="Enter blog title"
+                        />
+                    </div>
 
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">
-                                Category
-                            </label>
-                            <select
-                                required
-                                value={formData.categoryId}
-                                onChange={(e) =>
-                                    setFormData({ ...formData, categoryId: e.target.value })
-                                }
-                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                            >
-                                <option value="">Select a category</option>
-                                {categories.map((category) => (
-                                    <option key={category.id} value={category.id}>
-                                        {category.name}
-                                    </option>
-                                ))}
-                            </select>
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            Tags
+                        </label>
+                        <div className="flex flex-wrap gap-2">
+                            {TAGS.map((tag) => (
+                                <button
+                                    key={tag}
+                                    type="button"
+                                    onClick={() => toggleTag(tag)}
+                                    className={`px-4 py-1.5 rounded-full text-sm font-semibold capitalize transition-colors border ${
+                                        formData.tags.includes(tag)
+                                            ? "bg-blue-600 text-white border-blue-600"
+                                            : "bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600 hover:border-blue-400"
+                                    }`}
+                                >
+                                    {tag}
+                                </button>
+                            ))}
                         </div>
                     </div>
 
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                            Excerpt (optional)
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            Excerpt <span className="text-gray-400 font-normal">(optional)</span>
                         </label>
                         <textarea
                             value={formData.excerpt}
-                            onChange={(e) =>
-                                setFormData({ ...formData, excerpt: e.target.value })
-                            }
+                            onChange={(e) => setFormData({ ...formData, excerpt: e.target.value })}
                             rows={3}
-                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
                             placeholder="A short summary of your blog post"
                         />
                     </div>
 
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                             Content
                         </label>
                         <MarkdownEditor
                             value={formData.content}
-                            onChange={(value) =>
-                                setFormData({ ...formData, content: value })
-                            }
+                            onChange={(value) => setFormData({ ...formData, content: value })}
                         />
                     </div>
 
@@ -181,12 +160,10 @@ export default function EditBlogPage() {
                             type="checkbox"
                             id="published"
                             checked={formData.published}
-                            onChange={(e) =>
-                                setFormData({ ...formData, published: e.target.checked })
-                            }
+                            onChange={(e) => setFormData({ ...formData, published: e.target.checked })}
                             className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
                         />
-                        <label htmlFor="published" className="ml-2 text-sm text-gray-700">
+                        <label htmlFor="published" className="ml-2 text-sm text-gray-700 dark:text-gray-300">
                             Publish immediately
                         </label>
                     </div>
@@ -196,7 +173,7 @@ export default function EditBlogPage() {
                     <button
                         type="button"
                         onClick={() => router.back()}
-                        className="px-6 py-2 text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 font-medium"
+                        className="px-6 py-2 text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-600 font-medium"
                     >
                         Cancel
                     </button>

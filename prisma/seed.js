@@ -6,52 +6,27 @@ const prisma = new PrismaClient();
 async function main() {
   console.log('Starting database seed...');
 
-  // Create admin user
-  const hashedPassword = await bcrypt.hash("admin123", 10);
+  const adminEmail = process.env.ADMIN_EMAIL;
+  const adminPassword = process.env.ADMIN_PASSWORD;
+
+  if (!adminEmail || !adminPassword) {
+    throw new Error('ADMIN_EMAIL and ADMIN_PASSWORD must be set in .env before seeding.');
+  }
+
+  const hashedPassword = await bcrypt.hash(adminPassword, 10);
   const user = await prisma.user.upsert({
-    where: { email: "admin@example.com" },
-    update: {},
+    where: { email: adminEmail },
+    update: { password: hashedPassword },
     create: {
-      email: "admin@example.com",
-      name: "Admin User",
+      email: adminEmail,
+      name: "Admin",
       password: hashedPassword,
     },
   });
   console.log('✓ Created/Updated admin user');
 
-  // Create categories
-  const techCategory = await prisma.category.upsert({
-    where: { slug: 'technology' },
-    update: {},
-    create: {
-      name: 'Technology',
-      slug: 'technology',
-    },
-  });
-
-  const lifestyleCategory = await prisma.category.upsert({
-    where: { slug: 'lifestyle' },
-    update: {},
-    create: {
-      name: 'Lifestyle',
-      slug: 'lifestyle',
-    },
-  });
-
-  const businessCategory = await prisma.category.upsert({
-    where: { slug: 'business' },
-    update: {},
-    create: {
-      name: 'Business',
-      slug: 'business',
-    },
-  });
-
-  console.log('✓ Created/Updated categories');
-
-  // Create sample blog posts
-  // Using upsert to avoid duplicates
-  const blog1 = await prisma.blog.upsert({
+  // Create sample blog post
+  await prisma.blog.upsert({
     where: { slug: 'getting-started-with-nextjs-15' },
     update: {},
     create: {
@@ -84,9 +59,9 @@ Visit http://localhost:3000 to see your app!
 
 Next.js 15 is a powerful framework that makes building React applications easier and more performant.`,
       excerpt: 'Learn about the exciting new features in Next.js 15 and how to get started building modern web applications.',
+      tags: ['programming', 'advance'],
       published: true,
       publishedAt: new Date(),
-      categoryId: techCategory.id,
     },
   });
 
