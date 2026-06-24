@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
 
 export async function GET(request: NextRequest) {
   try {
@@ -8,7 +10,6 @@ export async function GET(request: NextRequest) {
 
     const blogs = await prisma.blog.findMany({
       where: published ? { published: published === "true" } : undefined,
-      include: { category: true },
       orderBy: { createdAt: "desc" },
     });
 
@@ -21,9 +22,6 @@ export async function GET(request: NextRequest) {
   }
 }
 
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
-
 export async function POST(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
@@ -32,11 +30,11 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { title, content, excerpt, categoryId, published } = body;
+    const { title, content, excerpt, tags, published } = body;
 
-    if (!title || !content || !categoryId) {
+    if (!title || !content) {
       return NextResponse.json(
-        { error: "Title, content, and category are required" },
+        { error: "Title and content are required" },
         { status: 400 }
       );
     }
@@ -52,11 +50,10 @@ export async function POST(request: NextRequest) {
         slug,
         content,
         excerpt: excerpt || content.substring(0, 150) + "...",
-        categoryId,
+        tags: tags || [],
         published: published || false,
         publishedAt: published ? new Date() : null,
       },
-      include: { category: true },
     });
 
     return NextResponse.json(blog, { status: 201 });

@@ -16,39 +16,39 @@ export default function EditCategoryPage() {
     const [error, setError] = useState("");
 
     useEffect(() => {
+        const fetchCategory = async () => {
+            try {
+                // Since we don't have a direct GET /api/categories/[id] yet (or maybe we do, let's check),
+                // but for now I'll stick to fetching all and filtering as per previous logic, 
+                // OR I should really implement GET /api/categories/[id].
+                // The previous code was fetching all. Let's stick to that for safety unless I update the API.
+                // Wait, I can just update the API. But let's check if I did.
+                // I viewed app/api/categories/[id]/route.ts and it had PUT and DELETE.
+                // So I should probably fetch all and filter for now to be safe, or update the API.
+                // Fetching all is easier for now to fix the build.
+
+                const listResponse = await fetch("/api/categories");
+                const data = await listResponse.json();
+                const category = data.find((c: any) => c.id === id);
+
+                if (category) {
+                    setName(category.name);
+                    setSlug(category.slug);
+                } else {
+                    setError("Category not found");
+                }
+            } catch (error) {
+                console.error("Failed to fetch category:", error);
+                setError("Failed to load category");
+            } finally {
+                setLoading(false);
+            }
+        };
+
         if (id) {
             fetchCategory();
         }
     }, [id]);
-
-    const fetchCategory = async () => {
-        try {
-            // Since we don't have a direct GET /api/categories/[id] yet (or maybe we do, let's check),
-            // but for now I'll stick to fetching all and filtering as per previous logic, 
-            // OR I should really implement GET /api/categories/[id].
-            // The previous code was fetching all. Let's stick to that for safety unless I update the API.
-            // Wait, I can just update the API. But let's check if I did.
-            // I viewed app/api/categories/[id]/route.ts and it had PUT and DELETE.
-            // So I should probably fetch all and filter for now to be safe, or update the API.
-            // Fetching all is easier for now to fix the build.
-
-            const listResponse = await fetch("/api/categories");
-            const data = await listResponse.json();
-            const category = data.find((c: any) => c.id === id);
-
-            if (category) {
-                setName(category.name);
-                setSlug(category.slug);
-            } else {
-                setError("Category not found");
-            }
-        } catch (error) {
-            console.error("Failed to fetch category:", error);
-            setError("Failed to load category");
-        } finally {
-            setLoading(false);
-        }
-    };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
