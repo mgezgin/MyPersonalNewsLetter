@@ -7,11 +7,7 @@ export async function GET() {
       include: {
         blogs: {
           include: {
-            blog: {
-              include: {
-                category: true,
-              },
-            },
+            blog: true,
           },
           orderBy: { order: "asc" },
         },
@@ -60,11 +56,7 @@ export async function POST(request: NextRequest) {
       include: {
         blogs: {
           include: {
-            blog: {
-              include: {
-                category: true,
-              },
-            },
+            blog: true,
           },
         },
       },
