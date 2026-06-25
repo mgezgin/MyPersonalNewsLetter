@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Inter, JetBrains_Mono } from "next/font/google";
+import Link from "next/link";
 import "./globals.css";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import Navigation from "@/components/Navigation";
@@ -39,14 +40,14 @@ export default function RootLayout({
                 <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
                   <p className="text-sm">&copy; {new Date().getFullYear()} Personal Blog. All rights reserved.</p>
                   <nav className="flex items-center gap-6 text-sm">
-                    <a href="/blog" className="hover:text-white transition-colors">Blog</a>
-                    <a href="/resume" className="hover:text-white transition-colors">Resume</a>
-                    <a
+                    <Link href="/blog" className="hover:text-white transition-colors">Blog</Link>
+                    <Link href="/resume" className="hover:text-white transition-colors">Resume</Link>
+                    <Link
                       href="/subscribe"
                       className="bg-blue-600 hover:bg-blue-500 text-white px-4 py-1.5 rounded-full font-semibold transition-colors"
                     >
                       Subscribe
-                    </a>
+                    </Link>
                   </nav>
                 </div>
               </div>
