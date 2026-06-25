@@ -1,12 +1,14 @@
 // This is your Prisma schema file
 
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["multiSchema"]
 }
 
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+  schemas  = ["blog"]
 }
 
 model Blog {
@@ -21,6 +23,8 @@ model Blog {
   createdAt   DateTime            @default(now())
   updatedAt   DateTime            @updatedAt
   newsletters NewsletterBlog[]
+
+  @@schema("blog")
 }
 
 model Newsletter {
@@ -34,6 +38,8 @@ model Newsletter {
   createdAt   DateTime         @default(now())
   updatedAt   DateTime         @updatedAt
   blogs       NewsletterBlog[]
+
+  @@schema("blog")
 }
 
 model NewsletterBlog {
@@ -46,6 +52,7 @@ model NewsletterBlog {
   createdAt    DateTime   @default(now())
 
   @@unique([newsletterId, blogId])
+  @@schema("blog")
 }
 
 model Subscriber {
@@ -56,6 +63,8 @@ model Subscriber {
   confirmedAt DateTime?
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
+
+  @@schema("blog")
 }
 
 model User {
@@ -65,4 +74,6 @@ model User {
   password  String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@schema("blog")
 }
