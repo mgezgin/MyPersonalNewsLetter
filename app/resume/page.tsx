@@ -26,7 +26,7 @@ export default function ResumePage() {
                             <div><a href="tel:+31638830211" className="hover:text-white">+31 638 830 211</a></div>
                             <div><a href="mailto:muslum_gezgin@hotmail.com" className="hover:text-white">muslum_gezgin@hotmail.com</a></div>
                             <div><a href="https://linkedin.com/in/mgezgin" className="hover:text-white">linkedin.com/in/mgezgin</a></div>
-                            <div><a href="https://github.com/mgezgin" className="hover:text-white">github.com/mgezgin</a></div>
+                            <div><a href="https://github.com/muslumgezgin" className="hover:text-white">github.com/muslumgezgin</a></div>
                         </div>
                     </div>
                 </div>
@@ -83,35 +83,55 @@ export default function ResumePage() {
                             {[
                                 {
                                     role: "Software Engineer",
-                                    company: "Shipcloud, Rotterdam",
-                                    period: "June 2022 – Present",
-                                    current: true,
-                                    description: "Work on core systems handling shipment creation, delivery tracking, and cost calculations. Collaborate with internal teams to develop scalable and efficient solutions for high-load systems.",
-                                    tags: ["C#", ".NET", "Azure", "REST APIs", "Docker"],
+                                    company: "Shipcloud B.V.",
+                                    location: "Rotterdam",
+                                    period: "Apr 2024 — Apr 2026",
+                                    bullets: [
+                                        "Worked on the core SCOUT TMS platform: shipment creation, delivery tracking, and cost/billing calculations for high-load logistics operations.",
+                                        "Built and maintained carrier integrations for UPS, DHL, PostNL, and DPD via REST APIs in C# .NET.",
+                                        "Developed billing and rating engine components using EF Core with PostgreSQL; background job processing with Hangfire.",
+                                        "Participated in code reviews, Agile ceremonies, and CI/CD pipeline maintenance.",
+                                        "Managed service deployments and monitored production health on Azure using Docker.",
+                                    ],
+                                    tags: ["C#", ".NET", "Azure", "REST APIs", "Blazor", "Docker", "PostgreSQL", "EF Core", "Hangfire"],
                                     color: "bg-blue-600",
                                 },
                                 {
                                     role: "Software Engineer",
                                     company: "Woonenzo",
-                                    period: "June 2022 – March 2024",
-                                    description: "Introduced a new ERP solution with Azure Functions enabling event-driven architecture. Gained experience with Azure Active Directory and automatic scaling solutions.",
-                                    tags: [".NET", "C#", "Docker", "Kubernetes", "Angular", "Azure Functions", "Cosmos DB"],
+                                    location: "",
+                                    period: "Jun 2020 — Mar 2024",
+                                    bullets: [
+                                        "Led backend development for a greenfield ERP solution using Azure Functions (serverless, event-driven), Cosmos DB, and Azure Active Directory.",
+                                        "Delivered scalable REST APIs for mobile and admin panel clients; built Angular-based admin control components.",
+                                        "Gained AWS exposure during cloud infrastructure evaluation and migration tasks.",
+                                        "Managed containerised deployments with Docker and Kubernetes on Azure.",
+                                        "Contributed full-stack in a second product: Node.js backend, Angular frontend, .NET 5 services.",
+                                    ],
+                                    tags: [".NET", "C#", "Docker", "Kubernetes", "Angular", "Azure", "Azure Functions", "Cosmos DB", "AWS", "Node.js", "TypeScript"],
                                     color: "bg-emerald-600",
                                 },
                                 {
                                     role: "Software Engineer",
-                                    company: "Rhinion, Rotterdam",
-                                    period: "March 2019 – June 2020",
-                                    description: "Visualized live platform data in dashboards and created control functions for clients. Cooperated with data scientists to implement complex business rules in back-end services.",
-                                    tags: ["Java", "TypeScript", "React", "C#", "GitHub"],
+                                    company: "Phinion",
+                                    location: "Rotterdam",
+                                    period: "Mar 2019 — Jun 2020",
+                                    bullets: [
+                                        "Built real-time data visualisation dashboards and client-facing control interfaces in close collaboration with data scientists.",
+                                        "Implemented complex domain-specific business rules from multiple client companies into backend services.",
+                                    ],
+                                    tags: ["Java", "TypeScript", "React", "Git", "GitLab"],
                                     color: "bg-orange-600",
                                 },
                                 {
                                     role: "Software Engineer Intern",
-                                    company: "Picult, Amsterdam",
-                                    period: "Feb 2018 – June 2018",
-                                    description: "Applied skills learned at Restart Network in a real project environment. Experimented with modern technologies and committed to writing high-quality code.",
-                                    tags: ["Java", "TypeScript", "React", "C#", "GitHub"],
+                                    company: "Picnic",
+                                    location: "Amsterdam",
+                                    period: "Jul 2018 — Feb 2019",
+                                    bullets: [
+                                        "Contributed to a live production product in a high-quality engineering culture, applying modern web development practices.",
+                                    ],
+                                    tags: [],
                                     color: "bg-purple-600",
                                 },
                             ].map((job) => (
@@ -121,22 +141,28 @@ export default function ResumePage() {
                                             <div className={`w-2.5 h-2.5 rounded-full mt-1.5 flex-shrink-0 ${job.color}`} />
                                             <h3 className="text-lg font-bold text-gray-900 dark:text-gray-100">{job.role}</h3>
                                         </div>
-                                        {job.current && (
-                                            <span className="text-xs font-semibold px-2.5 py-1 bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-400 rounded-full">
-                                                Current
-                                            </span>
-                                        )}
                                     </div>
-                                    <p className="text-sm font-semibold text-gray-500 dark:text-gray-400 ml-[1.375rem] mb-1">{job.company}</p>
+                                    <p className="text-sm font-semibold text-gray-500 dark:text-gray-400 ml-[1.375rem] mb-1">
+                                        {job.company}{job.location ? ` — ${job.location}` : ""}
+                                    </p>
                                     <p className="text-xs text-gray-400 dark:text-gray-500 ml-[1.375rem] mb-3">{job.period}</p>
-                                    <p className="text-gray-600 dark:text-gray-400 text-sm leading-relaxed ml-[1.375rem] mb-3">{job.description}</p>
-                                    <div className="flex flex-wrap gap-1.5 ml-[1.375rem]">
-                                        {job.tags.map((t) => (
-                                            <span key={t} className="px-2.5 py-0.5 bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 rounded text-xs font-medium">
-                                                {t}
-                                            </span>
+                                    <ul className="space-y-1.5 ml-[1.375rem] mb-3">
+                                        {job.bullets.map((b, i) => (
+                                            <li key={i} className="flex gap-2 text-gray-600 dark:text-gray-400 text-sm leading-relaxed">
+                                                <span className="mt-2 shrink-0 w-1.5 h-1.5 rounded-full bg-gray-400 dark:bg-gray-500" />
+                                                {b}
+                                            </li>
                                         ))}
-                                    </div>
+                                    </ul>
+                                    {job.tags.length > 0 && (
+                                        <div className="flex flex-wrap gap-1.5 ml-[1.375rem]">
+                                            {job.tags.map((t) => (
+                                                <span key={t} className="px-2.5 py-0.5 bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 rounded text-xs font-medium">
+                                                    {t}
+                                                </span>
+                                            ))}
+                                        </div>
+                                    )}
                                 </div>
                             ))}
                         </div>
