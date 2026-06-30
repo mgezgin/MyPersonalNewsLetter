@@ -112,7 +112,7 @@ export default async function PostPage({
         {blog.series && (prevPost || nextPost) && (
           <div className="mt-10 border-t border-gray-200 dark:border-gray-800 pt-8">
             <p className="text-xs font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500 mb-4">
-              More in "{blog.series.title}"
+              More in &ldquo;{blog.series.title}&rdquo;
             </p>
             <div className="grid grid-cols-2 gap-4">
               <div>
