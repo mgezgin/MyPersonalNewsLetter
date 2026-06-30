@@ -6,6 +6,11 @@ import MarkdownEditor from "@/components/MarkdownEditor";
 
 const TAGS = ["ai", "cloud", "advance", "programming"] as const;
 
+interface SeriesOption {
+    id: string;
+    title: string;
+}
+
 export default function EditBlogPage() {
     const router = useRouter();
     const params = useParams();
@@ -17,10 +22,13 @@ export default function EditBlogPage() {
         excerpt: "",
         tags: [] as string[],
         published: false,
+        seriesId: "",
+        seriesOrder: "",
     });
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
     const [error, setError] = useState("");
+    const [seriesList, setSeriesList] = useState<SeriesOption[]>([]);
 
     const toggleTag = (tag: string) => {
         setFormData((prev) => ({
@@ -32,18 +40,24 @@ export default function EditBlogPage() {
     };
 
     useEffect(() => {
-        const fetchBlog = async () => {
+        const fetchData = async () => {
             try {
-                const response = await fetch(`/api/blogs/${id}`);
-                if (!response.ok) throw new Error("Failed to fetch blog");
-                const data = await response.json();
+                const [blogRes, seriesRes] = await Promise.all([
+                    fetch(`/api/blogs/${id}`),
+                    fetch("/api/series"),
+                ]);
+                if (!blogRes.ok) throw new Error("Failed to fetch blog");
+                const data = await blogRes.json();
                 setFormData({
                     title: data.title,
                     content: data.content,
                     excerpt: data.excerpt || "",
                     tags: data.tags || [],
                     published: data.published,
+                    seriesId: data.seriesId || "",
+                    seriesOrder: data.seriesOrder != null ? String(data.seriesOrder) : "",
                 });
+                if (seriesRes.ok) setSeriesList(await seriesRes.json());
             } catch {
                 setError("Failed to load blog post");
             } finally {
@@ -51,7 +65,7 @@ export default function EditBlogPage() {
             }
         };
 
-        if (id) fetchBlog();
+        if (id) fetchData();
     }, [id]);
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -60,10 +74,16 @@ export default function EditBlogPage() {
         setError("");
 
         try {
+            const payload = {
+                ...formData,
+                seriesId: formData.seriesId || null,
+                seriesOrder: formData.seriesOrder ? parseInt(formData.seriesOrder) : null,
+            };
+
             const response = await fetch(`/api/blogs/${id}`, {
                 method: "PUT",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(formData),
+                body: JSON.stringify(payload),
             });
 
             const data = await response.json();
@@ -144,6 +164,40 @@ export default function EditBlogPage() {
                             placeholder="A short summary of your blog post"
                         />
                     </div>
+
+                    {seriesList.length > 0 && (
+                        <div className="grid grid-cols-2 gap-4">
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                    Series <span className="text-gray-400 font-normal">(optional)</span>
+                                </label>
+                                <select
+                                    value={formData.seriesId}
+                                    onChange={(e) => setFormData({ ...formData, seriesId: e.target.value })}
+                                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                                >
+                                    <option value="">None</option>
+                                    {seriesList.map((s) => (
+                                        <option key={s.id} value={s.id}>{s.title}</option>
+                                    ))}
+                                </select>
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                    Part # <span className="text-gray-400 font-normal">(order in series)</span>
+                                </label>
+                                <input
+                                    type="number"
+                                    min={1}
+                                    value={formData.seriesOrder}
+                                    onChange={(e) => setFormData({ ...formData, seriesOrder: e.target.value })}
+                                    disabled={!formData.seriesId}
+                                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 disabled:opacity-50"
+                                    placeholder="1"
+                                />
+                            </div>
+                        </div>
+                    )}
 
                     <div>
                         <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">

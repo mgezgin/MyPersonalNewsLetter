@@ -22,11 +22,29 @@ export default async function PostPage({
   const { slug } = await params;
   const blog = await prisma.blog.findUnique({
     where: { slug, published: true },
+    include: {
+      series: {
+        include: {
+          blogs: {
+            where: { published: true },
+            orderBy: { seriesOrder: "asc" },
+            select: { id: true, title: true, slug: true, seriesOrder: true },
+          },
+        },
+      },
+    },
   });
 
   if (!blog) {
     notFound();
   }
+
+  const seriesPosts = blog.series?.blogs ?? [];
+  const currentIndex = seriesPosts.findIndex((p) => p.slug === slug);
+  const prevPost = currentIndex > 0 ? seriesPosts[currentIndex - 1] : null;
+  const nextPost = currentIndex < seriesPosts.length - 1 ? seriesPosts[currentIndex + 1] : null;
+  const totalParts = seriesPosts.length;
+  const currentPart = currentIndex + 1;
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
@@ -37,6 +55,23 @@ export default async function PostPage({
         >
           ← Back to Blog
         </Link>
+
+        {blog.series && (
+          <div className="mb-6 bg-blue-50 dark:bg-blue-950/50 border border-blue-200 dark:border-blue-800 rounded-xl px-5 py-4">
+            <div className="flex items-center gap-2 mb-1">
+              <span className="text-xs font-semibold uppercase tracking-wider text-blue-500 dark:text-blue-400">
+                Series
+              </span>
+              <span className="text-xs text-blue-400 dark:text-blue-500">
+                · Part {currentPart} of {totalParts}
+              </span>
+            </div>
+            <p className="font-semibold text-blue-900 dark:text-blue-100">{blog.series.title}</p>
+            {blog.series.description && (
+              <p className="text-sm text-blue-700 dark:text-blue-300 mt-0.5">{blog.series.description}</p>
+            )}
+          </div>
+        )}
 
         <article>
           <div className="flex flex-wrap gap-1.5 mb-3">
@@ -73,6 +108,42 @@ export default async function PostPage({
             </div>
           </div>
         </article>
+
+        {blog.series && (prevPost || nextPost) && (
+          <div className="mt-10 border-t border-gray-200 dark:border-gray-800 pt-8">
+            <p className="text-xs font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500 mb-4">
+              More in "{blog.series.title}"
+            </p>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                {prevPost && (
+                  <Link
+                    href={`/blog/${prevPost.slug}`}
+                    className="group flex flex-col gap-1 p-4 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 hover:border-blue-400 dark:hover:border-blue-600 transition-colors"
+                  >
+                    <span className="text-xs text-gray-400 dark:text-gray-500">← Part {prevPost.seriesOrder}</span>
+                    <span className="text-sm font-medium text-gray-800 dark:text-gray-200 group-hover:text-blue-600 dark:group-hover:text-blue-400 line-clamp-2">
+                      {prevPost.title}
+                    </span>
+                  </Link>
+                )}
+              </div>
+              <div>
+                {nextPost && (
+                  <Link
+                    href={`/blog/${nextPost.slug}`}
+                    className="group flex flex-col gap-1 p-4 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 hover:border-blue-400 dark:hover:border-blue-600 transition-colors text-right"
+                  >
+                    <span className="text-xs text-gray-400 dark:text-gray-500">Part {nextPost.seriesOrder} →</span>
+                    <span className="text-sm font-medium text-gray-800 dark:text-gray-200 group-hover:text-blue-600 dark:group-hover:text-blue-400 line-clamp-2">
+                      {nextPost.title}
+                    </span>
+                  </Link>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

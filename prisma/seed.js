@@ -1,7 +1,10 @@
+require('dotenv').config();
 const { PrismaClient } = require('@prisma/client');
+const { PrismaPg } = require('@prisma/adapter-pg');
 const bcrypt = require('bcryptjs');
 
-const prisma = new PrismaClient();
+const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL });
+const prisma = new PrismaClient({ adapter });
 
 async function main() {
   console.log('Starting database seed...');
@@ -14,7 +17,7 @@ async function main() {
   }
 
   const hashedPassword = await bcrypt.hash(adminPassword, 10);
-  const user = await prisma.user.upsert({
+  await prisma.user.upsert({
     where: { email: adminEmail },
     update: { password: hashedPassword },
     create: {
@@ -23,7 +26,7 @@ async function main() {
       password: hashedPassword,
     },
   });
-  console.log('✓ Created/Updated admin user');
+  console.log('✓ Created/Updated admin user:', adminEmail);
 
   // Create sample blog post
   await prisma.blog.upsert({
@@ -66,7 +69,6 @@ Next.js 15 is a powerful framework that makes building React applications easier
   });
 
   console.log('✓ Created/Updated blog posts');
-
   console.log('\n✅ Database seeded successfully!');
 }
 

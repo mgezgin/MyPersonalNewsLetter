@@ -36,7 +36,7 @@ export async function PUT(
         }
 
         const body = await request.json();
-        const { title, content, excerpt, tags, published } = body;
+        const { title, content, excerpt, tags, published, seriesId, seriesOrder } = body;
 
         if (!title || !content) {
             return NextResponse.json(
@@ -60,6 +60,8 @@ export async function PUT(
                 tags: tags || [],
                 published,
                 publishedAt: published ? new Date() : null,
+                seriesId: seriesId ?? null,
+                seriesOrder: seriesOrder ?? null,
             },
         });
 

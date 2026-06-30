@@ -1,14 +1,24 @@
 // This is your Prisma schema file
 
 generator client {
-  provider        = "prisma-client-js"
-  previewFeatures = ["multiSchema"]
+  provider = "prisma-client-js"
 }
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
   schemas  = ["blog"]
+}
+
+model Series {
+  id          String   @id @default(uuid())
+  title       String
+  slug        String   @unique
+  description String?  @db.Text
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  blogs       Blog[]
+
+  @@schema("blog")
 }
 
 model Blog {
@@ -22,36 +32,10 @@ model Blog {
   publishedAt DateTime?
   createdAt   DateTime            @default(now())
   updatedAt   DateTime            @updatedAt
-  newsletters NewsletterBlog[]
+  seriesId    String?
+  seriesOrder Int?
+  series      Series?             @relation(fields: [seriesId], references: [id], onDelete: SetNull)
 
-  @@schema("blog")
-}
-
-model Newsletter {
-  id          String           @id @default(uuid())
-  title       String
-  slug        String           @unique
-  description String?
-  sent        Boolean          @default(false)
-  sentAt      DateTime?
-  scheduledAt DateTime?
-  createdAt   DateTime         @default(now())
-  updatedAt   DateTime         @updatedAt
-  blogs       NewsletterBlog[]
-
-  @@schema("blog")
-}
-
-model NewsletterBlog {
-  id           String     @id @default(uuid())
-  newsletterId String
-  blogId       String
-  order        Int        @default(0)
-  newsletter   Newsletter @relation(fields: [newsletterId], references: [id], onDelete: Cascade)
-  blog         Blog       @relation(fields: [blogId], references: [id], onDelete: Cascade)
-  createdAt    DateTime   @default(now())
-
-  @@unique([newsletterId, blogId])
   @@schema("blog")
 }
 

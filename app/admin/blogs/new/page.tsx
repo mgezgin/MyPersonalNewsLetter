@@ -1,10 +1,15 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import MarkdownEditor from "@/components/MarkdownEditor";
 
 const TAGS = ["ai", "cloud", "advance", "programming"] as const;
+
+interface SeriesOption {
+  id: string;
+  title: string;
+}
 
 export default function NewBlogPage() {
   const router = useRouter();
@@ -14,9 +19,19 @@ export default function NewBlogPage() {
     excerpt: "",
     tags: [] as string[],
     published: false,
+    seriesId: "",
+    seriesOrder: "",
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [seriesList, setSeriesList] = useState<SeriesOption[]>([]);
+
+  useEffect(() => {
+    fetch("/api/series")
+      .then((r) => r.json())
+      .then(setSeriesList)
+      .catch(() => {});
+  }, []);
 
   const toggleTag = (tag: string) => {
     setFormData((prev) => ({
@@ -33,10 +48,16 @@ export default function NewBlogPage() {
     setError("");
 
     try {
+      const payload = {
+        ...formData,
+        seriesId: formData.seriesId || null,
+        seriesOrder: formData.seriesOrder ? parseInt(formData.seriesOrder) : null,
+      };
+
       const response = await fetch("/api/blogs", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(payload),
       });
 
       const data = await response.json();
@@ -114,6 +135,40 @@ export default function NewBlogPage() {
               placeholder="A short summary of your blog post"
             />
           </div>
+
+          {seriesList.length > 0 && (
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Series <span className="text-gray-400 font-normal">(optional)</span>
+                </label>
+                <select
+                  value={formData.seriesId}
+                  onChange={(e) => setFormData({ ...formData, seriesId: e.target.value })}
+                  className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                >
+                  <option value="">None</option>
+                  {seriesList.map((s) => (
+                    <option key={s.id} value={s.id}>{s.title}</option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Part # <span className="text-gray-400 font-normal">(order in series)</span>
+                </label>
+                <input
+                  type="number"
+                  min={1}
+                  value={formData.seriesOrder}
+                  onChange={(e) => setFormData({ ...formData, seriesOrder: e.target.value })}
+                  disabled={!formData.seriesId}
+                  className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 disabled:opacity-50"
+                  placeholder="1"
+                />
+              </div>
+            </div>
+          )}
 
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
