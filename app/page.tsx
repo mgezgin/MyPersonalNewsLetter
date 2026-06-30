@@ -24,27 +24,41 @@ export default async function Home() {
   return (
     <div className="container mx-auto px-4 py-14 max-w-5xl">
 
-      {/* Hero */}
+      {/* Professional Summary */}
       <section className="mb-20">
-        <p className="text-sm font-semibold text-blue-600 dark:text-blue-400 uppercase tracking-widest mb-4">
-          Personal Blog
-        </p>
-        <h1 className="text-6xl sm:text-7xl font-extrabold text-gray-900 dark:text-gray-100 leading-[1.08] tracking-tight mb-6">
-          Ideas &amp;<br />Things Worth<br />Sharing
-        </h1>
-        <div className="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6">
-          <p className="text-lg text-gray-500 dark:text-gray-400 max-w-md">
-            Writing on technology, software engineering, and whatever catches my curiosity.
-          </p>
-          <Link
-            href="/blog"
-            className="shrink-0 inline-flex items-center gap-2 bg-gray-900 dark:bg-white text-white dark:text-gray-900 px-6 py-3 rounded-full font-semibold text-sm hover:opacity-80 transition-opacity"
-          >
-            All Posts
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4">
-              <path fillRule="evenodd" d="M3 10a.75.75 0 0 1 .75-.75h10.638L10.23 5.29a.75.75 0 1 1 1.04-1.08l5.5 5.25a.75.75 0 0 1 0 1.08l-5.5 5.25a.75.75 0 1 1-1.04-1.08l4.158-3.96H3.75A.75.75 0 0 1 3 10Z" clipRule="evenodd" />
-            </svg>
-          </Link>
+        <h2 className="text-xs font-semibold uppercase tracking-widest text-gray-400 dark:text-gray-500 mb-5">
+          About Me
+        </h2>
+        <div className="bg-gray-50 dark:bg-gray-800/60 border border-gray-200 dark:border-gray-700 rounded-2xl p-8 sm:p-10">
+          <div className="flex flex-col sm:flex-row gap-8">
+            <div className="flex-1">
+              <h3 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-3">
+                Muslum Gezgin
+              </h3>
+              <p className="text-blue-600 dark:text-blue-400 font-semibold text-sm mb-4 uppercase tracking-wide">
+                Software Engineer
+              </p>
+              <p className="text-gray-600 dark:text-gray-300 leading-relaxed mb-4">
+                I&apos;m a software engineer with a passion for building scalable systems and exploring the intersection of cloud infrastructure, AI, and modern software development. I write about what I learn, what I build, and what I find genuinely interesting in the tech world.
+              </p>
+              <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
+                My work spans backend engineering, cloud architecture, and applied AI — with a focus on turning complex problems into clean, maintainable solutions.
+              </p>
+            </div>
+            <div className="sm:w-56 flex flex-col gap-3">
+              {[
+                { label: "Focus Areas", value: "Cloud & AI" },
+                { label: "Background", value: "Backend Engineering" },
+                { label: "Writing About", value: "Tech & Software" },
+                { label: "Based in", value: "Netherlands" },
+              ].map(({ label, value }) => (
+                <div key={label} className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl px-4 py-3">
+                  <p className="text-xs text-gray-400 dark:text-gray-500 font-medium uppercase tracking-wide mb-0.5">{label}</p>
+                  <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">{value}</p>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       </section>
 

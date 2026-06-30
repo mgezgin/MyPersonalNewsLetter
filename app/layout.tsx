@@ -19,8 +19,8 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Personal Newsletter & Blog",
-  description: "Subscribe to our newsletter and read our latest blog posts",
+  title: "Muslum Gezgin - Personal Blog",
+  description: "A personal blog by Muslum Gezgin, sharing insights, experiences, and knowledge on various topics.",
 };
 
 export default function RootLayout({
